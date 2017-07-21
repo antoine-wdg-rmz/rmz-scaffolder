@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import tempfile
+import shutil
+
+from cookiecutter.main import cookiecutter
+
+REPO_URL = "https://github.com/antoine-wdg-rmz/docker-templates.git"
+
+
+def main():
+    dirname = tempfile.mkdtemp()
+
+    branch = sys.argv[1]
+    cookiecutter(REPO_URL, checkout=branch, output_dir=dirname)
+    service_name = os.walk(dirname).next()[1][0]
+    path = os.path.join(dirname, service_name)
+
+    services_compose = ''
+    scanning = True
+    with open(os.path.join(path, 'docker-compose.yml')) as f:
+        for line in f.readlines():
+            if scanning:
+                if line.startswith('services:'):
+                    scanning = False 
+            else:
+                services_compose += line 
+
+    new_compose = ''
+    with open('docker-compose.yml') as f:
+        for line in f.readlines():
+            new_compose += line
+            if line.startswith('services:'):
+                new_compose += services_compose
+
+    with open('docker-compose.yml', 'w') as f:
+        f.write(new_compose)
+
+    with open(os.path.join(path, 'env.dist')) as f:
+        env = f.read()
+
+    with open('env.dist', 'a+') as f:
+        f.write('\n' + env)
+
+    with open('.env', 'a+') as f:
+        f.write('\n' + env)
+
+    shutil.copytree(os.path.join(path, service_name), service_name)
+    shutil.rmtree(dirname)
+
+
+if __name__ == '__main__':
+    main()
