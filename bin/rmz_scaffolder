@@ -51,10 +51,12 @@ def main():
     service_name = os.walk(dirname).next()[1][0]
     path = os.path.join(dirname, service_name)
 
-    shutil.copytree(os.path.join(path, service_name), service_name)
     if branch != 'init':
         process_docker_compose(path)
         process_env(path)
+        shutil.copytree(os.path.join(path, service_name), service_name)
+    else:
+        shutil.copytree(path, service_name)
     
     shutil.rmtree(dirname)
 

@@ -1,5 +1,5 @@
 ## Installation
 
 ```
-pip install -e git+https://github.com/antoine-wdg-rmz/rmz-scaffolder.git
+pip install git+https://github.com/antoine-wdg-rmz/rmz-scaffolder.git
 ```
