@@ -26,6 +26,7 @@ def process_docker_compose(path):
         for line in f.readlines():
             new_compose += line
             if line.startswith('services:'):
+                new_compose += '\n'
                 new_compose += services_compose
 
     with open('docker-compose.yml', 'w') as f:
